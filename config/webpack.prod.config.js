@@ -14,6 +14,10 @@ const path = require('path');
 const PostCssAutoprefixerPlugin = require('autoprefixer');
 const PostCssRTLCSS = require('postcss-rtlcss');
 
+// Reduce CSS file size by ~70%
+const { PurgeCSSPlugin } = require('purgecss-webpack-plugin');
+const glob = require('glob');
+
 const HtmlWebpackNewRelicPlugin = require('../lib/plugins/html-webpack-new-relic-plugin');
 const commonConfig = require('./webpack.common.config');
 const presets = require('../lib/presets');
@@ -22,6 +26,10 @@ const presets = require('../lib/presets');
 dotenv.config({
   path: path.resolve(process.cwd(), '.env'),
 });
+
+const PATHS = {
+  src: path.join(__dirname, 'src'),
+};
 
 const extraPlugins = [];
 if (process.env.ENABLE_NEW_RELIC !== 'false') {
@@ -183,6 +191,13 @@ module.exports = merge(commonConfig, {
     new MiniCssExtractPlugin({
       filename: '[name].[chunkhash].css',
     }),
+
+    // The recommend usage by official docs
+    // https://purgecss.com/getting-started.html
+    new PurgeCSSPlugin({
+      paths: glob.sync(`${PATHS.src}/**/*`, { nodir: true }),
+    }),
+
     // Generates an HTML file in the output directory.
     new HtmlWebpackPlugin({
       inject: true, // Appends script tags linking to the webpack bundles at the end of the body
