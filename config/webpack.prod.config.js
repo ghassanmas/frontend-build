@@ -14,10 +14,13 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const path = require('path');
 const PostCssAutoprefixerPlugin = require('autoprefixer');
-const PostCssRTLCSS = require('postcss-rtlcss');
+ const PostCssRTLCSS = require('postcss-rtlcss');
+
+const purgecss = require("@fullhuman/postcss-purgecss");
 
 // Reduce CSS file size by ~70%
-const { PurgeCSSPlugin } = require('purgecss-webpack-plugin');
+// const { PurgeCSSPlugin } = require('purgecss-webpack-plugin');
+
 const glob = require('glob');
 
 const HtmlWebpackNewRelicPlugin = require('../lib/plugins/html-webpack-new-relic-plugin');
@@ -114,6 +117,10 @@ module.exports = merge(commonConfig, {
                   PostCssAutoprefixerPlugin(),
                   PostCssRTLCSS(),
                   CssNano(),
+                  purgecss({
+                    content: ['./**/*.html', './**/*.js'],
+                  }),
+
                 ],
               },
             },
@@ -196,9 +203,9 @@ module.exports = merge(commonConfig, {
 
     // The recommend usage by official docs
     // https://purgecss.com/getting-started.html
-    new PurgeCSSPlugin({
-      paths: glob.sync(`${PATHS.src}/**/*`, { nodir: true }),
-    }),
+    //    new PurgeCSSPlugin({
+    //      paths: glob.sync(`${PATHS.src}/**/*`, { nodir: true }),
+    //   }),
 
     // Generates an HTML file in the output directory.
     new HtmlWebpackPlugin({
