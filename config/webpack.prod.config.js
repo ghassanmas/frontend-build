@@ -118,7 +118,7 @@ module.exports = merge(commonConfig, {
                   PostCssRTLCSS(),
                   CssNano(),
                   purgecss({
-                    content: ['./**/*.html', './**/*.js'],
+                    content: ['./**/*.html', './**/*.js', './**/*.jsx'],
                   }),
 
                 ],
